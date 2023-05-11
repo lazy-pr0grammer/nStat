@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/logs"
+        android:icon="@drawable/ic_logs"
+        android:title="Logs" />
+    <item
+        android:id="@+id/usage"
+        android:icon="@drawable/ic_usage"
+        android:title="Usage" />
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/ic_home" />
+    <item
+        android:id="@+id/test"
+        android:icon="@drawable/ic_test"
+        android:title="Test" />
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_settings"
+        android:title="Settings" />
+</menu>
