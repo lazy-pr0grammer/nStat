@@ -1,14 +1,11 @@
 package com.aylax.nstat.ui.main;
 
 import android.os.Bundle;
-import android.view.MenuItem;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import com.aylax.nstat.R;
 import com.aylax.nstat.databinding.ActivityMainBinding;
 import com.aylax.nstat.util.Utils;
-import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.elevation.SurfaceColors;
 
 public class MainActivity extends AppCompatActivity {
   private ActivityMainBinding binding;
@@ -19,35 +16,35 @@ public class MainActivity extends AppCompatActivity {
     binding = ActivityMainBinding.inflate(getLayoutInflater());
 
     setContentView(binding.getRoot());
-    String[] names = {"MOBILE DATA", "WI-FI"};
-    if (!Utils.isNightMode(this))
-      getWindow()
-          .setStatusBarColor(ContextCompat.getColor(this, R.color.md_theme_light_background));
-    else
-      getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.md_theme_dark_background));
-    // binding.viewPager.setAdapter(new ViewpagerAdapter(getSupportFragmentManager(),
-    // getLifecycle()));
-    /*new TabLayoutMediator(
-           binding.tabLayout, binding.viewPager, ((tab, position) -> tab.setText(names[position])))
-       .attach();
-
-    */
+    setupNavigation();
+    init();
   }
 
   private void init() {
-    binding.bottomNavigationView.setOnItemSelectedListener(
-        new NavigationBarView.OnItemSelectedListener() {
-          @Override
-          public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-              case R.id.home:
+    setSupportActionBar(binding.toolbar);
+    Utils.setToolbarFont(binding.toolbar);
+    Utils.navigationFont(binding.navigation);
+    getWindow().setStatusBarColor(SurfaceColors.SURFACE_2.getColor(this));
+    getWindow().setNavigationBarColor(SurfaceColors.SURFACE_2.getColor(this));
+    binding.toolbar.setBackgroundColor(SurfaceColors.SURFACE_2.getColor(this));
+  }
 
-                break;
-              case R.id.logs:
-                break;
-            }
-            return false;
+  private void setupNavigation() {
+    binding.toolbar.setTitle("Usage");
+    binding.navigation.setOnItemSelectedListener(
+        item -> {
+          int id = item.getItemId();
+          binding.toolbar.setTitle(item.getTitle());
+          if (id == R.id.usage) {
+
+          } else if (id == R.id.stat) {
+
+          } else if (id == R.id.speed) {
+
+          } else if (id == R.id.settings) {
+
           }
+          return true;
         });
   }
 }

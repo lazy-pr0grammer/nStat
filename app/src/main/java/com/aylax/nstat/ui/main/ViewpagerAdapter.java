@@ -20,6 +20,6 @@ public class ViewpagerAdapter extends FragmentStateAdapter {
 
   @Override
   public int getItemCount() {
-    return 2;
+    return 3;
   }
 }
