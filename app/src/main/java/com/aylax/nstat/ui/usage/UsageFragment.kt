@@ -1,6 +1,7 @@
 package com.aylax.nstat.ui.usage
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,7 @@ class UsageFragment : Fragment() {
 
         viewModel.getAll().observe(viewLifecycleOwner) {
             binding.dataUsageRv.adapter = UsageAdapter(it)
+            Log.d("UsageFragment", it.size.toString())
         }
 
     }

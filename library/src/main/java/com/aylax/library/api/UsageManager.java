@@ -1,68 +1,39 @@
 package com.aylax.library.api;
 
-import android.app.usage.UsageStats;
-import android.app.usage.UsageStatsManager;
+import android.annotation.SuppressLint;
+import android.app.usage.NetworkStatsManager;
 import android.content.Context;
-import android.content.pm.PackageInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
+import android.telephony.TelephonyManager;
 import com.aylax.library.model.AppUsage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class UsageManager {
-  private final UsageStatsManager manager;
+  private final NetworkStatsManager manager;
+  private final TelephonyManager mngr;
   private final PackageManager pm;
+  private final Context context;
 
+  @SuppressLint("NewApi")
   public UsageManager(Context context) {
-    manager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
+    manager = (NetworkStatsManager) context.getSystemService(Context.NETWORK_STATS_SERVICE);
+    mngr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
     pm = context.getPackageManager();
+    this.context = context;
   }
 
   public List<AppUsage> getUsage(long start, long end) {
-    Map<String, UsageStats> queryUsageStats = manager.queryAndAggregateUsageStats(start, end);
-    List<AppUsage> appUsageList = new ArrayList<>();
-    for (Map.Entry<String, UsageStats> usageStatsEntry : queryUsageStats.entrySet()) {
-      String packageName = usageStatsEntry.getKey();
-      UsageStats usageStats = usageStatsEntry.getValue();
-      try {
-        PackageInfo packageInfo = pm.getPackageInfo(packageName, 0);
-        String appName = packageInfo.applicationInfo.loadLabel(pm).toString();
-        Drawable appIcon = packageInfo.applicationInfo.loadIcon(pm);
-        long mobileDataUsage = usageStats.getLastTimeUsed();
-        long wifiDataUsage = usageStats.getTotalTimeInForeground() - mobileDataUsage;
-        long totalDataUsage = wifiDataUsage + mobileDataUsage;
-        int dataUsagePercentage =
-            calculateDataUsagePercentage(totalDataUsage, mobileDataUsage, wifiDataUsage);
-        appUsageList.add(
-            new AppUsage(
-                appName,
-                packageName,
-                appIcon,
-                mobileDataUsage,
-                wifiDataUsage,
-                totalDataUsage,
-                dataUsagePercentage));
-      } catch (PackageManager.NameNotFoundException e) {
-        Log.e(UsageManager.class.getSimpleName(), "Package name not found: " + packageName, e);
-      }
+    List<AppUsage> usages = new ArrayList<>();
+    List<ApplicationInfo> applicationInfo =
+        pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+    for (ApplicationInfo info : applicationInfo) {
+      usages.add(new AppUsage(info.loadLabel(pm).toString(), info.packageName, info.loadIcon(pm), 0, 0, 0, 0));
     }
 
-    Collections.sort(
-        appUsageList, (o1, o2) -> Long.compare(o2.getTotal_usage(), o1.getTotal_usage()));
-
-    return appUsageList;
-  }
-
-  private int calculateDataUsagePercentage(
-      long totalDataUsage, long mobileDataUsage, long wifiDataUsage) {
-    if (totalDataUsage > 0) {
-      return (int) ((mobileDataUsage + wifiDataUsage) * 100 / totalDataUsage);
-    } else {
-      return 0;
-    }
+    return usages;
   }
 }
